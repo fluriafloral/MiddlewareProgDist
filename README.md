@@ -1,10 +1,10 @@
-Projeto da segunda unidade da disciplina de programação distribuída
+# Projeto da segunda unidade da disciplina de programação distribuída
 
 Pedro Henrique Teixeira e Silva
 
 Ranna Beatriz de Lima Lisboa
 
-##documentação Rust
+## Documentação Rust
 
 https://doc.rust-lang.org/std/index.html
 
