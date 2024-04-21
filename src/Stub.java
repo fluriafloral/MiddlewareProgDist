@@ -30,11 +30,16 @@ public class Stub {
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
             System.out.println("Conexão com o serviço de nomes realizada com sucesso");
-            System.out.println("Insira o número do canal de chat que deseja acessar:");
+            System.out.println("Insira o nome do canal de chat que deseja acessar:");
             Scanner scanner = new Scanner(System.in);
             System.out.println(in.readLine());
-            out.write(scanner.nextInt());
+            out.write(scanner.nextLine());
             scanner.close();
+
+            int port = Integer.parseInt(in.readLine());
+            endConnection();
+
+
 
         } catch (Exception e) {
             

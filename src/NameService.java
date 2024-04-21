@@ -42,13 +42,15 @@ public class NameService {
 
         ServerSocket serverSocket;
         Socket socket;
+        BufferedReader in;
+        BufferedWriter out;
 
         try {
 
             serverSocket = new ServerSocket(8080);
             socket = serverSocket.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println("Serviço de nomes iniciado com sucesso, rodando na porta 8080");
 
             nameAddress = new HashMap<>();
@@ -56,15 +58,9 @@ public class NameService {
             nameAddress.put("FLAMENGO", 8082);
             nameAddress.put("FLU", 8083);
 
-            out.write(getChatServicesNames());
-
-            out.write(getPort(Integer.parseInt(in.readLine())));
+            out.write(getChatServicesList());
+            out.write(getPort(in.readLine()));
             
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Para encerrar o serviço aperte [enter]");
-            scanner.nextLine();
-            
-            scanner.close();
             in.close();
             out.close();
             socket.close();
