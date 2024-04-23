@@ -2,44 +2,60 @@ package src;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Stub {
     
-    private Socket socket;
-    private BufferedReader in;
-    private BufferedWriter out;
+    private Socket socketNameService;
+    private BufferedReader inNameService;
+    private BufferedWriter outNameService;
+
+    private Socket socketAppService;
+    private BufferedReader inAppService;
+    private BufferedWriter outAppService;
+
+    private String host;
+    private int port;
 
     public Stub() {
 
-        connectToChat();
+        try {
+
+            socketNameService = new Socket("localhost", 8080);
+            inNameService = new BufferedReader(new InputStreamReader(socketNameService.getInputStream()));
+            outNameService = new BufferedWriter(new OutputStreamWriter(socketNameService.getOutputStream()));
+            
+            System.out.println("Lista dos serviços disponíveis:");
+            System.out.println(inNameService.readLine());
+
+        } catch(Exception e) {
+
+            e.printStackTrace();
+
+        }
 
     }
 
-    public void connectToChat() {
+    public void getAppServiceInfo(String serviceName) {
 
         try {
 
-            startConnection("localhost", 8080);
-            System.out.println("Conexão com o serviço de nomes realizada com sucesso");
-
-            //passa para o identificador do serviço desejado (nesse caso, o canal de chat que deseja acessar)
-            System.out.println("Insira o nome do canal de chat que deseja acessar:");
-            Scanner scanner = new Scanner(System.in);
-            System.out.println(in.readLine());
-            out.write(scanner.nextLine());
-            scanner.close();
+            //passa para o identificador do serviço desejado 
+            outNameService.write(serviceName);
+            outNameService.flush();
 
             //recebe host e porta do serviço selecionado e encerra conexão com serviço de nomes
-            int port = Integer.parseInt(in.readLine());
-            endConnection();
+            System.out.println(inNameService.readLine());
+            String[] appServiceAddress = inNameService.readLine().split("/");
+            host = appServiceAddress[0];
+            port = Integer.parseInt(appServiceAddress[1]);
 
-
+            socketNameService.close();
+            inNameService.close();
+            outNameService.close();
 
         } catch (Exception e) {
             
@@ -49,68 +65,26 @@ public class Stub {
 
     }
 
-    public String getMessages() {
-
-        String messages = new String();
+    public void connectToAppService(String parameter) {
 
         try {
 
-            String message = in.readLine();
-            while(message != null) {
-                
-                messages += message;
+            socketAppService = new Socket(host, port);
+            inAppService = new BufferedReader(new InputStreamReader(socketAppService.getInputStream()));
+            outAppService = new BufferedWriter(new OutputStreamWriter(socketAppService.getOutputStream()));
 
-            }
+            System.out.println(inAppService.readLine());
 
-        } catch (IOException e) {
-           
-            e.printStackTrace();
+            outAppService.write(parameter);
+            outAppService.flush();
 
-        }
+            System.out.println(inAppService.readLine());
 
-        return messages;
+            socketAppService.close();
+            inAppService.close();
+            outAppService.close();
 
-    }
-
-    public void sendMessage(String message) {
-
-        try {
-
-            out.write(message);
-
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-
-        }
-
-    }
-
-    public void startConnection(String host, int port) {
-
-        try {
-
-            socket = new Socket(host, port);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-    }
-
-    public void endConnection() {
-
-        try {
-
-            socket.close();
-            in.close();
-            out.close();
-
-        } catch (Exception e) {
+        } catch(Exception e) {
 
             e.printStackTrace();
 

@@ -8,5 +8,8 @@ public class Client {
 
         stub = new Stub();
 
+        stub.getAppServiceInfo("temperature_converter");
+        stub.connectToAppService("30.0 C");
+
     }
 }
